@@ -40,9 +40,9 @@ func genFileName(incomingName string) (string, error) {
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
-	//	if r.Method != "POST" {
-	//		http.Error(w, "400, Bad request", http.StatusBadRequest)
-	//	}
+	if r.Method != "POST" {
+		http.Error(w, "400, Bad request", http.StatusBadRequest)
+	}
 	if err := r.ParseMultipartForm(32 << 20); err != nil {
 		fmt.Fprintf(w, "ParseMultipartForm() err: %v", err)
 	}
@@ -51,7 +51,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "FormFile() err: %v", err)
 	}
 	defer image.Close()
-	fmt.Fprint(w, handler.Header)
 	fileName, err := genFileName(handler.Filename)
 	if err != nil {
 		fmt.Fprint(w, err)
@@ -61,6 +60,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "OpenFile() err: %v", err)
 	}
 	defer f.Close()
+	fmt.Fprint(w, r.Host+"/images/"+fileName)
 	io.Copy(f, image)
 }
 
