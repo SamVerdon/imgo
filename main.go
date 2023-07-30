@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"time"
 )
 
 func load(filepath string) *image.NRGBA {
@@ -34,7 +35,8 @@ func genFileName(incomingName string) (string, error) {
 		return "", errors.New("no valid file extension found")
 	}
 	hasher := sha1.New()
-	hasher.Write([]byte(incomingName))
+	nowString := fmt.Sprint(time.Now())
+	hasher.Write([]byte(nowString))
 	hashedName := hex.EncodeToString(hasher.Sum(nil))
 	return hashedName[:10] + "." + extension, nil
 }
